@@ -1,6 +1,7 @@
 const express = require("express"); //import package 
 const dotenv= require("dotenv");
 const mongoose = require("mongoose");
+const courseLib = require("./backend/lib/courseLib"); 
 
 dotenv.config() //tells server that there is a .env file read it 
 
@@ -38,12 +39,15 @@ app.listen(3000,function(){     //using the port number 3000 we will run our ser
 
 mongoose.set('strictQuery', true); // in normal cases strict cases are false 
 
-mongoose.connect(process.env.MONGO_CONNECTION_STRING,function(err){ //we take tyhe mongdb connection strning from env variables and useit to connect to db
+mongoose.connect(process.env.MONGO_CONNECTION_STRING,async function(err){ //we take yhe mongdb connection strning from env variables and useit to connect to db
     if(err){
         console.log(err);   // this will be thrown when there is a error 
     }
     else{
         console.log("DB Connected Successfully"); // this will run when db is successful
+        await courseLib.createFirstCourse();
+        const course = await courseLib.getAllCourse();
+        console.log(course);
 
         app.listen(3000,function(){     //using the port number 3000 we will run our server 
             console.log("Server running on http://localhost:3000")  // command to display when our server is running 
